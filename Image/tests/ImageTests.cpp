@@ -1,6 +1,11 @@
 #include <gtest/gtest.h>
+#include "Image.h"
+
 
 TEST(Image,ctor)
 {
-  ASSERT_TRUE(false);
+  Image img(100,200);
+
+  EXPECT_EQ(img.width(),100);
+  EXPECT_EQ(img.height(),200);
 }
