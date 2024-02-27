@@ -2,16 +2,34 @@
 #include <algorithm>
 #include <OpenImageIO/imageio.h>
 
-
-Image::Image(int _w, int _h) : m_width{_w},m_height{_h}
+Image::Image(int _w, int _h, unsigned char _r, unsigned char _g, unsigned char _b,unsigned char _a) : m_width{_w},m_height{_h}
 {
-  m_pixels = std::make_unique<RGBA []>(m_width*m_height);
-//  std::fill_n(m_pixels.get(),m_height*m_width,RGBA(255,255,255,255));
+    m_pixels = std::make_unique<RGBA []>(m_width*m_height);
+    for(size_t i=0; i<m_width*m_height; ++i)
+    {
+        m_pixels[i]=RGBA(_r,_g,_b,_a);
+    }
+}
 
-  for(size_t i=0; i<m_width*m_height; ++i)
-  {
-    m_pixels[i]=RGBA(255,255,255,255);
-  }
+Image::Image(int _w, int _h) : Image(_w,_h,255,255,255,255)
+{
+}
+
+void Image::setPixel(int _x, int _y, const RGBA &_rgba)
+{
+    size_t index = (_y * m_width) + _x;
+    if ((_x >= 0 && _x <= m_width - 1) && (_y >= 0 && _y <= m_height - 1))
+        m_pixels[index]=_rgba;
+
+}
+
+void Image::clear(unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a)
+{
+    for(size_t i=0; i<m_width*m_height; ++i)
+    {
+        m_pixels[i]=RGBA(_r,_g,_b,_a);
+    }
+
 }
 
 int Image::width() const
@@ -49,9 +67,36 @@ void Image::setPixel(int _x, int _y, unsigned char _r, unsigned char _g, unsigne
 
 
 
-
-
-
+// based on https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+void Image::line(int _sx, int _sy, int _ex, int _ey, unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a  )
+{
+    int dx = std::abs(_ex - _sx);
+    int dy = std::abs(_ey - _sy);
+    int sx = (_sx < _ex) ? 1 : -1;
+    int sy = (_sy < _ey) ? 1 : -1;
+    int err = dx - dy;
+    int x = _sx;
+    int y = _sy;
+    while (true)
+    {
+        setPixel(x, y, _r, _g, _b, _a);
+        if (x == _ex && y == _ey)
+        {
+            break; // finished drawing
+        }
+        int e2 = 2 * err;
+        if (e2 > -dy)
+        {
+          err -= dy;
+          x += sx;
+        }
+        if (e2 < dx)
+        {
+          err += dx;
+          y += sy;
+        }
+    }
+}
 
 
 
