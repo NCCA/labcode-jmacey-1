@@ -44,17 +44,20 @@ int Image::height() const
 
 RGBA Image::getPixel(int _x, int _y) const
 {
+
   // mul row add col
   size_t index = (_y * m_width) + _x;
   //  if( (_x <0 || _x>m_width) || (_y<0 || _y>m_height))
-  if ((_x >= 0 && _x <= m_width - 1) && (_y >= 0 && _y <= m_height - 1))
-  {
-    return m_pixels[index];
-  }
-  else
-  {
-    return RGBA(0, 0, 0, 0);
-  }
+ // if ((_x >= 0 && _x <= m_width - 1) && (_y >= 0 && _y <= m_height - 1))
+  return m_pixels[index];
+
+//  {
+//    return m_pixels[index];
+//  }
+//  else
+//  {
+//    return RGBA(0, 0, 0, 0);
+//  }
 }
 
 

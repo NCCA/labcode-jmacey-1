@@ -10,6 +10,8 @@ public :
   Walker(int _w, int _h);
   void randomSeed();
   void saveImage(std::string_view _fname) const;
+  bool walk();
+  void setSeed(int _x, int _y);
 private :
     int m_width;
     int m_height;
