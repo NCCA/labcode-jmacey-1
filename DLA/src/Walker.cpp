@@ -2,9 +2,7 @@
 #include "Walker.h"
 
 
-
 std::mt19937 g_rd;
-std::uniform_int_distribution<>walkDir(-1,1);
 
 Walker::Walker(int _w, int _h) : m_width{_w}, m_height{_h}
 {
@@ -43,6 +41,7 @@ bool Walker::walk()
   // reset start point for walker
   int xpos=m_xRand(g_rd);
   int ypos=m_yRand(g_rd);
+  std::uniform_int_distribution<>walkDir(-1,1);
   bool walking = true;
   while(walking)
   {
