@@ -6,10 +6,12 @@ int main()
 {
   Walker sim(400,400);
   std::cout<<"DLA Sim\n";
-  for(int i=0; i<40; ++i)
+  for(int i=0; i<400; ++i)
   {
-    sim.randomSeed();
+//    sim.randomSeed();
+      sim.setSeed(i,200);
   }
+  sim.saveImage("start.png");
   char name[100];
   int frame=0;
   for(int iteration=0; iteration<10000; ++iteration)
@@ -17,20 +19,18 @@ int main()
     auto found=sim.walk();
     if(found)
     {
-      std::snprintf(name,100,"img.%04d.bmp",frame++);
-      sim.saveImage(name);
+      std::cout<<"Found Seed\n";
+      if(iteration % 250)
+      {
+        std::snprintf(name,100,"img.%04d.png",frame++);
+        sim.saveImage(name);
+      }
+    }
 
-      std::cout<<"Found seed\n";
-    }
-    else
-    {
-      std::cout<<"reset\n";
-    }
   }
 
 
-
-  sim.saveImage("test.bmp");
+  sim.saveImage("test.png");
 
   return EXIT_SUCCESS;
 }
