@@ -15,8 +15,8 @@ include_directories(include)
 # Now we add our target executable and the file it is built from.
 add_executable(Particle)
 target_sources(Particle PRIVATE src/main.cpp src/Emitter.cpp src/Vec3.cpp
-include/Particle.h include/Emitter.h  )
-target_link_libraries(Particle PRIVATE  fmt::fmt-header-only)
+include/Particle.h include/Emitter.h src/Random.cpp include/Random.h )
+target_link_libraries(Particle PRIVATE fmt::fmt  fmt::fmt-header-only)
 
 #################################################################################
 # Testing code
@@ -26,6 +26,10 @@ find_package(GTest CONFIG REQUIRED)
 include(GoogleTest)
 enable_testing()
 add_executable(ParticleTests)
-target_sources(ParticleTests PRIVATE tests/ParticleTests.cpp  src/Emitter.cpp src/Vec3.cpp include/Emitter.h include/Particle.h include/Vec3.h)
-target_link_libraries(ParticleTests PRIVATE GTest::gtest GTest::gtest_main )
+target_sources(ParticleTests PRIVATE tests/ParticleTests.cpp  src/Emitter.cpp src/Vec3.cpp include/Emitter.h
+        include/Particle.h include/Vec3.h
+        src/Random.cpp include/Random.h
+
+)
+target_link_libraries(ParticleTests PRIVATE fmt::fmt GTest::gtest GTest::gtest_main )
 gtest_discover_tests(ParticleTests)
