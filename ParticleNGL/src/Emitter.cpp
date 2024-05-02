@@ -8,6 +8,7 @@
 #include <ngl/Transformation.h>
 #include <ngl/ShaderLib.h>
 #include <ngl/VAOPrimitives.h>
+#include <ngl/VAOFactory.h>
 Emitter::Emitter(int _numParticles, int _maxAlive)
 {
   m_particles.resize(_numParticles);
@@ -16,6 +17,7 @@ Emitter::Emitter(int _numParticles, int _maxAlive)
   {
     createZeroParticle(p);
   }
+  m_vao = ngl::VAOFactory::createVAO(ngl::simpleVAO,GL_POINTS);
 }
 
 void Emitter::createZeroParticle(Particle &_p)
@@ -51,22 +53,32 @@ ngl::Vec3 Emitter::randomVectorOnSphere()
 
 void Emitter::render() const
 {
-  ngl::Mat4 look=ngl::lookAt({0,130,130},{0,0,0},{0,1,0});
-  ngl::Mat4 persp=ngl::perspective(45.0f,1.0,0.1,200);
-  ngl::Transformation tx;
-  for(auto p : m_particles)
-  {
-    tx.setPosition(p.pos);
-    tx.setScale(p.size,p.size,p.size);
-    ngl::ShaderLib::setUniform("MVP", persp*look*tx.getMatrix());
-    ngl::ShaderLib::setUniform("Colour",p.colour.m_r,p.colour.m_g,p.colour.m_b,1.0f);
-    ngl::VAOPrimitives::draw(ngl::bunny);//"sphere");
-    //    fmt::print("{} ,{}, {} \n",p.pos.m_x,
-//               p.pos.m_y, p.pos.m_z);
+//  ngl::Mat4 look=ngl::lookAt({0,130,130},{0,0,0},{0,1,0});
+//  ngl::Mat4 persp=ngl::perspective(45.0f,1.0,0.1,200);
+//  glPointSize(4);
+//  ngl::ShaderLib::setUniform("MVP", persp*look);
+  m_vao->bind();
+  m_vao->setData(ngl::AbstractVAO::VertexData(m_particles.size()*sizeof(Particle),m_particles[0].pos.m_x));
+  m_vao->setVertexAttributePointer(0,3,GL_FLOAT,sizeof(Particle),0);
+  m_vao->setVertexAttributePointer(1,3,GL_FLOAT,sizeof(Particle),6);
 
-
-
-  }
+  m_vao->setNumIndices(m_particles.size());
+  m_vao->draw();
+  m_vao->unbind();
+  //  ngl::Transformation tx;
+//  for(auto p : m_particles)
+//  {
+//    tx.setPosition(p.pos);
+//    tx.setScale(p.size,p.size,p.size);
+//    ngl::ShaderLib::setUniform("MVP", persp*look*tx.getMatrix());
+//    ngl::ShaderLib::setUniform("Colour",p.colour.m_r,p.colour.m_g,p.colour.m_b,1.0f);
+//    ngl::VAOPrimitives::draw(ngl::bunny);//"sphere");
+//    //    fmt::print("{} ,{}, {} \n",p.pos.m_x,
+////               p.pos.m_y, p.pos.m_z);
+//
+//
+//
+//  }
 }
 
 void Emitter::update()
@@ -79,7 +91,7 @@ ngl::Vec3 gravity(0,-9.87, 0);
 static int numP =0;
 // choose number to birth
 // find first not alive and set as new particle
-int numberToBirth=10+ngl::Random::randomPositiveNumber(50);
+int numberToBirth=1000+ngl::Random::randomPositiveNumber(50);
 
 for(int i=0; i<numberToBirth; ++i)
 {
